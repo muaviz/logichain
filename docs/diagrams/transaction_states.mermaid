@@ -1,0 +1,9 @@
+stateDiagram-v2
+    [*] --> Active: Begin Transaction
+    Active --> Partially_Committed: Final Operation Executed
+    Active --> Failed: Error / Exception / Abort Signal
+    Partially_Committed --> Committed: WAL Flushed to Non-Volatile Disk
+    Partially_Committed --> Failed: System Crash / Disk Write Failure
+    Failed --> Aborted: Undo Phase Completed (Rollback)
+    Committed --> [*]: Transaction Terminated (Success)
+    Aborted --> [*]: Transaction Restarted or Terminated (Failure)

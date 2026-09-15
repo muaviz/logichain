@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LogiChain DBMS - Interactive Control Center</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1e293b; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+        .tab-btn.active { background-color: #3b82f6; color: white; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex items-center justify-between shadow-lg">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-xl text-white shadow-md">
+                LC
+            </div>
+            <div>
+                <h1 class="text-xl font-bold text-white tracking-wide">LogiChain DBMS</h1>
+                <p class="text-xs text-slate-400">Enterprise Supply Chain Reference Implementation (CSE3001)</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-4">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 mr-2 animate-pulse"></span>
+                Engine: Online (SQLite / Dual-Ready)
+            </span>
+            <a href="/docs" target="_blank" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-xs font-medium border border-slate-700 transition">
+                <i class="fa-solid fa-code mr-1"></i> Swagger API
+            </a>
+            <button onclick="reinitializeDatabase()" class="px-3 py-1.5 bg-rose-900 hover:bg-rose-800 text-rose-200 rounded text-xs font-medium border border-rose-700 transition">
+                <i class="fa-solid fa-rotate-right mr-1"></i> Reset DB
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="flex flex-1 overflow-hidden">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="w-64 bg-slate-900 border-r border-slate-800 p-4 flex flex-col space-y-2">
+            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider px-3 mb-2">Management</div>
+            
+            <button onclick="switchTab('overview')" id="btn-overview" class="tab-btn active w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 transition">
+                <i class="fa-solid fa-chart-pie w-5 text-center"></i>
+                <span>Dashboard Overview</span>
+            </button>
+            
+            <button onclick="switchTab('explorer')" id="btn-explorer" class="tab-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 transition">
+                <i class="fa-solid fa-table-cells w-5 text-center"></i>
+                <span>Table Explorer</span>
+            </button>
+
+            <button onclick="switchTab('console')" id="btn-console" class="tab-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 transition">
+                <i class="fa-solid fa-terminal w-5 text-center"></i>
+                <span>SQL Query Console</span>
+            </button>
+
+            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider px-3 mt-4 mb-2">Syllabus Suites</div>
+
+            <button onclick="switchTab('labs')" id="btn-labs" class="tab-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 transition">
+                <i class="fa-solid fa-flask-vial w-5 text-center"></i>
+                <span>Lab Experiments 1-11</span>
+            </button>
+
+            <button onclick="switchTab('concurrency')" id="btn-concurrency" class="tab-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 transition">
+                <i class="fa-solid fa-bolt w-5 text-center"></i>
+                <span>ACID & Deadlocks</span>
+            </button>
+
+            <button onclick="switchTab('audit')" id="btn-audit" class="tab-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 transition">
+                <i class="fa-solid fa-shield-halved w-5 text-center"></i>
+                <span>Audit & Triggers</span>
+            </button>
+
+            <button onclick="switchTab('schema')" id="btn-schema" class="tab-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 transition">
+                <i class="fa-solid fa-sitemap w-5 text-center"></i>
+                <span>ER Diagrams & Specs</span>
+            </button>
+        </aside>
+
+        <!-- Dynamic Content Area -->
+        <main class="flex-1 bg-slate-950 overflow-y-auto custom-scrollbar p-6">
+            
+            <!-- 1. OVERVIEW TAB -->
+            <section id="tab-overview" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl shadow">
+                        <div class="text-slate-400 text-xs font-medium uppercase">Total Warehouses</div>
+                        <div class="text-3xl font-bold text-white mt-1" id="stat-wh">4 Hubs</div>
+                        <div class="text-xs text-blue-400 mt-2"><i class="fa-solid fa-warehouse mr-1"></i> Metro & Regional</div>
+                    </div>
+                    <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl shadow">
+                        <div class="text-slate-400 text-xs font-medium uppercase">Catalog Products</div>
+                        <div class="text-3xl font-bold text-white mt-1" id="stat-prod">10 Items</div>
+                        <div class="text-xs text-emerald-400 mt-2"><i class="fa-solid fa-box mr-1"></i> 6 Categories</div>
+                    </div>
+                    <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl shadow">
+                        <div class="text-slate-400 text-xs font-medium uppercase">Active Fleet Assets</div>
+                        <div class="text-3xl font-bold text-white mt-1" id="stat-fleet">6 Vehicles</div>
+                        <div class="text-xs text-amber-400 mt-2"><i class="fa-solid fa-truck-moving mr-1"></i> Semis, Reefers & Air</div>
+                    </div>
+                    <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl shadow">
+                        <div class="text-slate-400 text-xs font-medium uppercase">Realized Revenue</div>
+                        <div class="text-3xl font-bold text-white mt-1" id="stat-rev">$28,474.32</div>
+                        <div class="text-xs text-indigo-400 mt-2"><i class="fa-solid fa-chart-line mr-1"></i> Multi-Dimensional Mart</div>
+                    </div>
+                </div>
+
+                <!-- Fast Analytics Summary -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+                        <h2 class="text-base font-bold text-white mb-3 flex items-center">
+                            <i class="fa-solid fa-layer-group text-blue-500 mr-2"></i> Sales by Material Category (Lab 3)
+                        </h2>
+                        <div id="overview-material-table" class="overflow-x-auto text-xs">Loading analytics...</div>
+                    </div>
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+                        <h2 class="text-base font-bold text-white mb-3 flex items-center">
+                            <i class="fa-solid fa-truck-fast text-emerald-500 mr-2"></i> Recent Cargo Dispatches & Shipments
+                        </h2>
+                        <div id="overview-shipments-table" class="overflow-x-auto text-xs">Loading shipments...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. TABLE EXPLORER TAB -->
+            <section id="tab-explorer" class="hidden space-y-4">
+                <div class="flex items-center justify-between bg-slate-900 p-4 rounded-xl border border-slate-800">
+                    <div class="flex items-center space-x-3">
+                        <label class="text-sm font-semibold text-slate-300">Select Database Entity / View:</label>
+                        <select id="explorer-table-select" onchange="loadTableData()" class="bg-slate-950 border border-slate-700 text-slate-200 text-sm rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                    <div id="explorer-table-stats" class="text-xs text-slate-400"></div>
+                </div>
+
+                <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow">
+                    <div id="explorer-data-container" class="overflow-x-auto custom-scrollbar p-2 max-h-[600px]">
+                        <p class="p-6 text-slate-500 text-center">Select a table above to view records.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. SQL CONSOLE TAB -->
+            <section id="tab-console" class="hidden space-y-4">
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm font-bold text-slate-200 flex items-center">
+                            <i class="fa-solid fa-code text-blue-400 mr-2"></i> SQL Query Input
+                        </label>
+                        <span class="text-xs text-slate-400">Ctrl+Enter to run</span>
+                    </div>
+                    <textarea id="sql-query-input" rows="4" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm font-mono text-emerald-400 focus:outline-none focus:ring-2 focus:ring-blue-500 custom-scrollbar" placeholder="SELECT * FROM EMPLOYEE WHERE salary > 70000;"></textarea>
+                    
+                    <div class="flex items-center justify-between pt-1">
+                        <div class="space-x-2">
+                            <button onclick="setSampleQuery(1)" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded">Sample: Pilots Cert</button>
+                            <button onclick="setSampleQuery(2)" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded">Sample: Boss Tree</button>
+                            <button onclick="setSampleQuery(3)" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded">Sample: OLAP Cube</button>
+                        </div>
+                        <button onclick="runCustomQuery()" class="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-bold shadow transition flex items-center">
+                            <i class="fa-solid fa-play mr-2"></i> Execute Query
+                        </button>
+                    </div>
+                </div>
+
+                <div id="console-result-card" class="bg-slate-900 border border-slate-800 rounded-xl p-4 hidden space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                        <div id="console-status-badge" class="text-xs font-bold text-emerald-400"></div>
+                        <div id="console-execution-time" class="text-xs text-slate-400 font-mono"></div>
+                    </div>
+                    <div id="console-result-table" class="overflow-x-auto custom-scrollbar max-h-[500px]"></div>
+                </div>
+            </section>
+
+            <!-- 4. LAB EXPERIMENTS TAB -->
+            <section id="tab-labs" class="hidden space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                    <button onclick="loadLabSuite('lab01')" class="bg-slate-900 border border-slate-800 hover:border-blue-500 p-4 rounded-xl text-left transition group">
+                        <div class="text-xs text-blue-400 font-bold uppercase">Lab 1</div>
+                        <div class="text-sm font-semibold text-white mt-1 group-hover:text-blue-400">Pilot & Division</div>
+                        <div class="text-xs text-slate-400 mt-1">Airlines Flight & Certifications</div>
+                    </button>
+                    <button onclick="loadLabSuite('lab02')" class="bg-slate-900 border border-slate-800 hover:border-blue-500 p-4 rounded-xl text-left transition group">
+                        <div class="text-xs text-blue-400 font-bold uppercase">Lab 2</div>
+                        <div class="text-sm font-semibold text-white mt-1 group-hover:text-blue-400">25 Sailors Queries</div>
+                        <div class="text-xs text-slate-400 mt-1">ALL, ANY, Outer Joins, Age</div>
+                    </button>
+                    <button onclick="loadLabSuite('lab03')" class="bg-slate-900 border border-slate-800 hover:border-blue-500 p-4 rounded-xl text-left transition group">
+                        <div class="text-xs text-blue-400 font-bold uppercase">Lab 3</div>
+                        <div class="text-sm font-semibold text-white mt-1 group-hover:text-blue-400">Wholesale OLAP Mart</div>
+                        <div class="text-xs text-slate-400 mt-1">Material, Spatial & Time Cube</div>
+                    </button>
+                    <button onclick="loadLabSuite('lab11')" class="bg-slate-900 border border-slate-800 hover:border-blue-500 p-4 rounded-xl text-left transition group">
+                        <div class="text-xs text-blue-400 font-bold uppercase">Lab 11</div>
+                        <div class="text-sm font-semibold text-white mt-1 group-hover:text-blue-400">Employee Hierarchy</div>
+                        <div class="text-xs text-slate-400 mt-1">Self Joins, Boss Rankings</div>
+                    </button>
+                </div>
+
+                <div id="lab-display-container" class="space-y-4">
+                    <p class="text-slate-500 text-center p-8 bg-slate-900 rounded-xl border border-slate-800">Select a lab experiment module above to execute queries.</p>
+                </div>
+            </section>
+
+            <!-- 5. ACID CONCURRENCY & DEADLOCKS TAB -->
+            <section id="tab-concurrency" class="hidden space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Isolation Simulator -->
+                    <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl space-y-3">
+                        <h3 class="text-sm font-bold text-white flex items-center">
+                            <i class="fa-solid fa-repeat text-amber-400 mr-2"></i> Isolation Anomalies
+                        </h3>
+                        <p class="text-xs text-slate-400">Demonstrates Non-Repeatable Read anomaly under Read Committed isolation.</p>
+                        <button onclick="triggerIsolationSimulation()" class="w-full py-2 bg-amber-600 hover:bg-amber-500 text-white rounded text-xs font-bold transition">
+                            Run Non-Repeatable Read Demo
+                        </button>
+                    </div>
+
+                    <!-- Deadlock Simulator -->
+                    <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl space-y-3">
+                        <h3 class="text-sm font-bold text-white flex items-center">
+                            <i class="fa-solid fa-lock text-rose-400 mr-2"></i> Deadlock Simulator
+                        </h3>
+                        <p class="text-xs text-slate-400">Spawns 2 concurrent threads acquiring row locks in reverse order, demonstrating cycle detection.</p>
+                        <button onclick="triggerDeadlockSimulation()" class="w-full py-2 bg-rose-600 hover:bg-rose-500 text-white rounded text-xs font-bold transition">
+                            Run Deadlock Simulator
+                        </button>
+                    </div>
+
+                    <!-- 2PC Simulator -->
+                    <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl space-y-3">
+                        <h3 class="text-sm font-bold text-white flex items-center">
+                            <i class="fa-solid fa-network-wired text-blue-400 mr-2"></i> Distributed 2PC
+                        </h3>
+                        <p class="text-xs text-slate-400">Simulates Two-Phase Commit across distributed warehouse nodes.</p>
+                        <button onclick="triggerTwoPCSimulation()" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white rounded text-xs font-bold transition">
+                            Run 2PC Commit/Abort Demo
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Simulation Output Terminal -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-2">
+                    <div class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                        <span>Simulation Execution Trace Log</span>
+                        <span id="simulation-status" class="text-slate-500">Idle</span>
+                    </div>
+                    <pre id="simulation-log-output" class="bg-slate-950 p-4 rounded-lg text-xs font-mono text-emerald-400 overflow-x-auto custom-scrollbar max-h-[400px]">Click a simulation button above to run.</pre>
+                </div>
+            </section>
+
+            <!-- 6. AUDIT & TRIGGERS TAB -->
+            <section id="tab-audit" class="hidden space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Live Trigger Action Card -->
+                    <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl space-y-4">
+                        <h3 class="text-sm font-bold text-white flex items-center">
+                            <i class="fa-solid fa-user-pen text-blue-400 mr-2"></i> Trigger Test: Customer Balance Update (Lab 5)
+                        </h3>
+                        <p class="text-xs text-slate-400">Modifying a customer balance activates the transparent audit trigger, logging old and new balances into `AUDIT_CLIENT_LOG`.</p>
+                        <div class="space-y-2">
+                            <label class="text-xs text-slate-300">Customer: Metro Workspace Solutions (ID: 701)</label>
+                            <input id="audit-new-balance" type="number" value="14500" class="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <button onclick="triggerCustomerUpdate()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded text-xs font-bold transition">
+                            Apply Balance Update & Fire Trigger
+                        </button>
+                    </div>
+
+                    <!-- Business Exception Trigger Card -->
+                    <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl space-y-4">
+                        <h3 class="text-sm font-bold text-white flex items-center">
+                            <i class="fa-solid fa-triangle-exclamation text-rose-400 mr-2"></i> Error Trigger: Price Reduction Lock (Lab 10)
+                        </h3>
+                        <p class="text-xs text-slate-400">Attempts to reduce base price by > 75% will be rejected by the trigger with a user-defined error code `ERR-30012`.</p>
+                        <button onclick="triggerIllegalPriceDrop()" class="px-4 py-2 bg-rose-700 hover:bg-rose-600 text-white rounded text-xs font-bold transition">
+                            Attempt Illegal 80% Price Drop
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Live Audit Trail Log -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-bold text-white flex items-center">
+                            <i class="fa-solid fa-clock-rotate-left text-emerald-400 mr-2"></i> Live `AUDIT_CLIENT_LOG` Entries
+                        </h3>
+                        <button onclick="loadAuditLogs()" class="text-xs text-blue-400 hover:text-blue-300">Refresh Log</button>
+                    </div>
+                    <div id="audit-table-container" class="overflow-x-auto custom-scrollbar text-xs">Loading audit records...</div>
+                </div>
+            </section>
+
+            <!-- 7. SCHEMA & ER DIAGRAMS TAB -->
+            <section id="tab-schema" class="hidden space-y-6">
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-3">
+                    <h3 class="text-base font-bold text-white flex items-center">
+                        <i class="fa-solid fa-diagram-project text-blue-400 mr-2"></i> Crow's Foot Entity-Relationship Diagram (ERD)
+                    </h3>
+                    <p class="text-xs text-slate-400">Complete conceptual model mapping all 20 strong & weak entities, hierarchies, and associative tables.</p>
+                    <div class="bg-slate-950 p-4 rounded-xl overflow-x-auto text-xs font-mono text-slate-300">
+                        <pre>
+GEOGRAPHY_LOCATION (1) ───< WAREHOUSE (N) ───< WAREHOUSE_BIN [Weak] (N)
+GEOGRAPHY_LOCATION (1) ───< CUSTOMER (N)  ───< CUSTOMER_ORDER (N) ───< ORDER_ITEM (N)
+GEOGRAPHY_LOCATION (1) ───< SUPPLIER (N)  ───< SUPPLIER_PRODUCT (M:N) >─── PRODUCT (N)
+PRODUCT_CATEGORY (1)   ───< PRODUCT (N)   ───< INVENTORY_STOCK (N)
+EMPLOYEE (1) [Boss]    ───< EMPLOYEE (N)  ───< DRIVER_CERTIFICATION (M:N) >─── VEHICLE_TYPE
+CUSTOMER_ORDER (1)     ───< SHIPMENT (N)  ───< SHIPMENT_ITEM [Weak] (N)
+CUSTOMER ───[Trigger]───> AUDIT_CLIENT_LOG
+INVENTORY_STOCK ───[Trigger]───> AUDIT_INVENTORY_LOG
+                        </pre>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        const API_BASE = "";
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            document.querySelectorAll("main > section").forEach(el => el.classList.add("hidden"));
+            document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
+            
+            const targetSection = document.getElementById("tab-" + tabId);
+            const targetBtn = document.getElementById("btn-" + tabId);
+            
+            if (targetSection) targetSection.classList.remove("hidden");
+            if (targetBtn) targetBtn.classList.add("active");
+
+            if (tabId === "explorer") loadTableDropdown();
+            if (tabId === "audit") loadAuditLogs();
+        }
+
+        // Helper to format JSON array as HTML Table
+        function createHTMLTable(data) {
+            if (!data || data.length === 0) return "<p class='p-4 text-slate-500 text-center'>No records returned.</p>";
+            const headers = Object.keys(data[0]);
+            let html = "<table class='min-w-full divide-y divide-slate-800 text-left'><thead><tr class='bg-slate-950'>";
+            headers.forEach(h => html += `<th class='px-3 py-2 text-xs font-bold text-slate-400 uppercase'>${h.replace(/_/g, ' ')}</th>`);
+            html += "</tr></thead><tbody class='divide-y divide-slate-800 bg-slate-900'>";
+            data.forEach(row => {
+                html += "<tr class='hover:bg-slate-800/50 transition'>";
+                headers.forEach(h => {
+                    const val = row[h];
+                    html += `<td class='px-3 py-2 text-xs text-slate-300 font-mono whitespace-nowrap'>${val !== null ? val : '<span class="text-slate-600">NULL</span>'}</td>`;
+                });
+                html += "</tr>";
+            });
+            html += "</tbody></table>";
+            return html;
+        }
+
+        // Initialize Overview
+        async function loadOverview() {
+            try {
+                const resMat = await fetch(`${API_BASE}/analytics/sales-by-material`);
+                const dataMat = await resMat.json();
+                document.getElementById("overview-material-table").innerHTML = createHTMLTable(dataMat);
+
+                const resShip = await fetch(`${API_BASE}/shipments/?status=DELIVERED`);
+                const dataShip = await resShip.json();
+                document.getElementById("overview-shipments-table").innerHTML = createHTMLTable(dataShip.slice(0, 5));
+            } catch (err) {
+                console.error("Failed to load overview:", err);
+            }
+        }
+
+        // Table Explorer
+        async function loadTableDropdown() {
+            const select = document.getElementById("explorer-table-select");
+            select.innerHTML = "";
+            try {
+                const res = await fetch(`${API_BASE}/system/tables`);
+                const tables = await res.json();
+                tables.forEach(t => {
+                    const opt = document.createElement("option");
+                    opt.value = t.table_name;
+                    opt.textContent = `${t.table_name} (${t.row_count} rows)`;
+                    select.appendChild(opt);
+                });
+                loadTableData();
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function loadTableData() {
+            const select = document.getElementById("explorer-table-select");
+            const tableName = select.value;
+            if (!tableName) return;
+            const container = document.getElementById("explorer-data-container");
+            container.innerHTML = "<p class='p-6 text-slate-500 text-center'>Loading data...</p>";
+
+            try {
+                const res = await fetch(`${API_BASE}/system/tables/${tableName}`);
+                const data = await res.json();
+                container.innerHTML = createHTMLTable(data.rows);
+                document.getElementById("explorer-table-stats").textContent = `Fetched ${data.total_fetched} rows from ${tableName}`;
+            } catch (e) {
+                container.innerHTML = `<p class='p-6 text-rose-400 text-center'>Error loading table: ${e}</p>`;
+            }
+        }
+
+        // Custom SQL Console
+        async function runCustomQuery() {
+            const query = document.getElementById("sql-query-input").value;
+            const card = document.getElementById("console-result-card");
+            const badge = document.getElementById("console-status-badge");
+            const timeSpan = document.getElementById("console-execution-time");
+            const tableContainer = document.getElementById("console-result-table");
+
+            card.classList.remove("hidden");
+            tableContainer.innerHTML = "<p class='p-4 text-slate-500 text-center'>Executing query...</p>";
+
+            try {
+                const res = await fetch(`${API_BASE}/system/query`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ query })
+                });
+                const result = await res.json();
+
+                if (result.status === "SUCCESS") {
+                    badge.textContent = `SUCCESS: ${result.type === 'DQL' ? result.row_count + ' Rows' : result.rows_affected + ' Rows Affected'}`;
+                    badge.className = "text-xs font-bold text-emerald-400";
+                    timeSpan.textContent = `${result.execution_time_ms} ms`;
+                    tableContainer.innerHTML = result.type === 'DQL' ? createHTMLTable(result.rows) : `<p class='p-4 text-emerald-400'>DML Command executed successfully.</p>`;
+                } else {
+                    badge.textContent = "QUERY ERROR";
+                    badge.className = "text-xs font-bold text-rose-400";
+                    timeSpan.textContent = `${result.execution_time_ms} ms`;
+                    tableContainer.innerHTML = `<p class='p-4 text-rose-400 font-mono text-xs'>${result.error_message}</p>`;
+                }
+            } catch (err) {
+                tableContainer.innerHTML = `<p class='p-4 text-rose-400'>Network Error: ${err}</p>`;
+            }
+        }
+
+        function setSampleQuery(type) {
+            const input = document.getElementById("sql-query-input");
+            if (type === 1) {
+                input.value = "SELECT e.emp_id, e.first_name || ' ' || e.last_name AS pilot_name, vt.type_name, dc.certification_number\nFROM EMPLOYEE e\nJOIN DRIVER_CERTIFICATION dc ON e.emp_id = dc.emp_id\nJOIN VEHICLE_TYPE vt ON dc.type_code = vt.type_code\nWHERE vt.type_name LIKE '%Boeing%';";
+            } else if (type === 2) {
+                input.value = "SELECT m.emp_id AS manager_id, m.first_name || ' ' || m.last_name AS manager_name, COUNT(e.emp_id) AS managed_count\nFROM EMPLOYEE m\nJOIN EMPLOYEE e ON e.manager_id = m.emp_id\nGROUP BY m.emp_id, m.first_name, m.last_name\nORDER BY managed_count DESC;";
+            } else if (type === 3) {
+                input.value = "SELECT dp.material_type, dl.region, SUM(f.quantity_sold) as units, SUM(f.net_revenue) as revenue\nFROM FACT_SALES_SHIPMENT f\nJOIN DIM_PRODUCT_HIERARCHY dp ON f.dim_product_key = dp.dim_product_key\nJOIN DIM_CUSTOMER_LOCATION dl ON f.dim_location_key = dl.dim_location_key\nGROUP BY dp.material_type, dl.region\nORDER BY revenue DESC;";
+            }
+        }
+
+        // Lab Suites
+        async function loadLabSuite(labId) {
+            const container = document.getElementById("lab-display-container");
+            container.innerHTML = "<p class='p-6 text-slate-500 text-center'>Executing Lab queries...</p>";
+            try {
+                const res = await fetch(`${API_BASE}/system/labs/${labId}`);
+                const data = await res.json();
+                let html = `<div class='bg-slate-900 border border-slate-800 p-5 rounded-xl space-y-4'>
+                    <h3 class='text-base font-bold text-white'>${data.lab_title}</h3>`;
+                data.sections.forEach(sec => {
+                    html += `<div class='space-y-2'>
+                        <h4 class='text-xs font-bold text-blue-400 uppercase tracking-wide'>${sec.title}</h4>
+                        <div class='overflow-x-auto rounded-lg border border-slate-800'>${createHTMLTable(sec.data)}</div>
+                    </div>`;
+                });
+                html += `</div>`;
+                container.innerHTML = html;
+            } catch (err) {
+                container.innerHTML = `<p class='p-6 text-rose-400 text-center'>Error loading lab suite: ${err}</p>`;
+            }
+        }
+
+        // Concurrency Simulations
+        async function triggerIsolationSimulation() {
+            const out = document.getElementById("simulation-log-output");
+            document.getElementById("simulation-status").textContent = "Running Isolation Anomaly Demo...";
+            out.textContent = "Executing transaction sequence...";
+            try {
+                const res = await fetch(`${API_BASE}/system/simulations/isolation`, { method: "POST" });
+                const data = await res.json();
+                let txt = `=== ${data.anomaly} ===\n${data.definition}\n\nExecution Trace:\n`;
+                data.execution_trace.forEach(l => txt += `${l}\n`);
+                txt += `\nConclusion: ${data.conclusion}`;
+                out.textContent = txt;
+                document.getElementById("simulation-status").textContent = "Completed";
+            } catch (err) {
+                out.textContent = "Error: " + err;
+            }
+        }
+
+        async function triggerDeadlockSimulation() {
+            const out = document.getElementById("simulation-log-output");
+            document.getElementById("simulation-status").textContent = "Running Deadlock Simulation...";
+            out.textContent = "Spawning competing threads...";
+            try {
+                const res = await fetch(`${API_BASE}/system/simulations/deadlock`, { method: "POST" });
+                const data = await res.json();
+                let txt = `=== ${data.title} ===\n\n`;
+                data.logs.forEach(l => txt += `${l}\n`);
+                txt += `\nResolution: ${data.resolution_technique}`;
+                out.textContent = txt;
+                document.getElementById("simulation-status").textContent = "Completed";
+            } catch (err) {
+                out.textContent = "Error: " + err;
+            }
+        }
+
+        async function triggerTwoPCSimulation() {
+            const out = document.getElementById("simulation-log-output");
+            document.getElementById("simulation-status").textContent = "Running 2PC Simulation...";
+            try {
+                const res = await fetch(`${API_BASE}/system/simulations/2pc`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ tx_id: "TX-GUI-DEMO-" + Math.floor(Math.random()*1000) })
+                });
+                const data = await res.json();
+                let txt = data.execution_log.join("\n");
+                out.textContent = txt;
+                document.getElementById("simulation-status").textContent = "Decision: " + data.decision;
+            } catch (err) {
+                out.textContent = "Error: " + err;
+            }
+        }
+
+        // Audit Logs
+        async function loadAuditLogs() {
+            const container = document.getElementById("audit-table-container");
+            try {
+                const res = await fetch(`${API_BASE}/audit/clients`);
+                const data = await res.json();
+                container.innerHTML = createHTMLTable(data);
+            } catch (err) {
+                container.innerHTML = "Error loading audit records: " + err;
+            }
+        }
+
+        async function triggerCustomerUpdate() {
+            const val = document.getElementById("audit-new-balance").value;
+            try {
+                const res = await fetch(`${API_BASE}/system/query`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ query: `UPDATE CUSTOMER SET balance_due = ${val} WHERE customer_id = 701;` })
+                });
+                const result = await res.json();
+                alert("Customer updated! Audit trigger captured prior and new balance.");
+                loadAuditLogs();
+            } catch (e) {
+                alert("Error updating: " + e);
+            }
+        }
+
+        async function triggerIllegalPriceDrop() {
+            try {
+                const res = await fetch(`${API_BASE}/system/query`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ query: `UPDATE PRODUCT SET base_price = 5.00 WHERE product_id = 301;` })
+                });
+                const result = await res.json();
+                if (result.status === "ERROR") {
+                    alert("Trigger Blocked Illegal DML as expected:\n" + result.error_message);
+                } else {
+                    alert("Unexpected success: " + JSON.stringify(result));
+                }
+            } catch (e) {
+                alert("Error: " + e);
+            }
+        }
+
+        async function reinitializeDatabase() {
+            if (!confirm("Are you sure you want to reset and re-seed the database?")) return;
+            try {
+                const res = await fetch(`${API_BASE}/system/reinitialize-database`, { method: "POST" });
+                const data = await res.json();
+                alert(data.message);
+                loadOverview();
+            } catch (e) {
+                alert("Error resetting database: " + e);
+            }
+        }
+
+        // Initialize on load
+        window.addEventListener("DOMContentLoaded", () => {
+            loadOverview();
+        });
+    </script>
+</body>
+</html>

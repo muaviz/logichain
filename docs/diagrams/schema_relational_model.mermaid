@@ -1,0 +1,46 @@
+flowchart LR
+    subgraph LocationDomain ["Spatial Hierarchy"]
+        GL["GEOGRAPHY_LOCATION (PK: loc_id)"]
+    end
+
+    subgraph StaffFleet ["Staff & Fleet Hierarchy"]
+        EMP["EMPLOYEE (PK: emp_id)"]
+        DEP["EMPLOYEE_DEPENDENT (PK: emp_id, dep_name)"]
+        VT["VEHICLE_TYPE (PK: type_code)"]
+        DC["DRIVER_CERT (PK: emp_id, type_code)"]
+        VEH["VEHICLE (PK: vehicle_id)"]
+    end
+
+    subgraph ProductWarehouse ["Inventory & Hubs"]
+        SUP["SUPPLIER (PK: supplier_id)"]
+        CAT["PRODUCT_CATEGORY (PK: category_id)"]
+        PROD["PRODUCT (PK: product_id)"]
+        SP["SUPPLIER_PRODUCT (PK: supplier_id, product_id)"]
+        WH["WAREHOUSE (PK: warehouse_id)"]
+        BIN["WAREHOUSE_BIN (PK: warehouse_id, bin_code)"]
+        STK["INVENTORY_STOCK (PK: stock_id)"]
+    end
+
+    subgraph OrdersFulfillment ["Orders, Dispatch & Audit"]
+        CUST["CUSTOMER (PK: customer_id)"]
+        ORD["CUSTOMER_ORDER (PK: order_id)"]
+        OI["ORDER_ITEM (PK: order_id, item_seq)"]
+        SHP["SHIPMENT (PK: shipment_id)"]
+        SI["SHIPMENT_ITEM (PK: shipment_id, item_seq)"]
+        AUD_C["AUDIT_CLIENT_LOG (PK: audit_id)"]
+        AUD_I["AUDIT_INVENTORY_LOG (PK: audit_id)"]
+    end
+
+    GL --> WH & CUST & SUP
+    EMP --> EMP & DEP & DC & WH & SHP
+    VT --> DC & VEH
+    VEH --> SHP
+    SUP --> SP
+    PROD --> SP & STK & OI & SI
+    CAT --> PROD
+    WH --> BIN & STK & VEH & SHP
+    BIN --> STK
+    CUST --> ORD & AUD_C
+    ORD --> OI & SHP
+    SHP --> SI
+    STK --> AUD_I

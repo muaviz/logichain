@@ -1,0 +1,24 @@
+flowchart TD
+    CRASH["System Crash / Power Loss Event"] --> SCAN_CP["Locate Most Recent Fuzzy Checkpoint"]
+    
+    subgraph Phase1 ["Phase 1: Analysis Phase"]
+        SCAN_CP --> READ_LOG_FWD["Scan WAL Log Forward to End-of-Log"]
+        READ_LOG_FWD --> ID_WINNERS["Identify Committed Transactions (Winners)"]
+        READ_LOG_FWD --> ID_LOSERS["Identify Active/Uncommitted Transactions (Losers)"]
+        READ_LOG_FWD --> BLD_DPT["Reconstruct Dirty Page Table (DPT) & RecLSN"]
+    end
+
+    subgraph Phase2 ["Phase 2: Redo Phase (Repeating History)"]
+        BLD_DPT --> SCAN_REDO["Scan Forward from Smallest RecLSN in DPT"]
+        SCAN_REDO --> REAPPLY["Reapply ALL Logged Updates (Committed + Aborted)"]
+        REAPPLY --> RESTORE_STATE["Database Restored to Exact Pre-Crash State"]
+    end
+
+    subgraph Phase3 ["Phase 3: Undo Phase (Rolling Back Losers)"]
+        RESTORE_STATE --> SCAN_UNDO["Scan Backward through Log for Loser Transactions"]
+        SCAN_UNDO --> UNDO_ACTIONS["Undo Operations of Loser Transactions"]
+        UNDO_ACTIONS --> WRITE_CLR["Write Compensation Log Records (CLRs)"]
+        WRITE_CLR --> WRITE_END["Write <END> Log Record for Loser Tx"]
+    end
+
+    WRITE_END --> RECOVERY_DONE["Recovery Completed: System Ready for New Transactions"]

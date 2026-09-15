@@ -1,0 +1,34 @@
+erDiagram
+    GEOGRAPHY_LOCATION ||--o{ WAREHOUSE : "hosts"
+    GEOGRAPHY_LOCATION ||--o{ CUSTOMER : "located_in"
+    GEOGRAPHY_LOCATION ||--o{ SUPPLIER : "based_in"
+
+    SUPPLIER ||--o{ SUPPLIER_PRODUCT : "supplies"
+    PRODUCT ||--o{ SUPPLIER_PRODUCT : "supplied_by"
+    PRODUCT_CATEGORY ||--o{ PRODUCT : "classifies"
+    
+    PRODUCT ||--o{ INVENTORY_STOCK : "stocked_as"
+    WAREHOUSE ||--o{ INVENTORY_STOCK : "stores"
+    WAREHOUSE ||--o{ WAREHOUSE_BIN : "contains (weak)"
+    WAREHOUSE_BIN ||--o{ INVENTORY_STOCK : "allocates"
+
+    EMPLOYEE ||--o{ EMPLOYEE : "manages (self-join)"
+    EMPLOYEE ||--o{ EMPLOYEE_DEPENDENT : "supports (weak)"
+    EMPLOYEE ||--o{ DRIVER_CERTIFICATION : "holds"
+    VEHICLE_TYPE ||--o{ DRIVER_CERTIFICATION : "qualifies"
+    VEHICLE_TYPE ||--o{ VEHICLE : "categorizes"
+    WAREHOUSE ||--o{ VEHICLE : "garages"
+
+    CUSTOMER ||--o{ CUSTOMER_ORDER : "places"
+    CUSTOMER_ORDER ||--o{ ORDER_ITEM : "contains"
+    PRODUCT ||--o{ ORDER_ITEM : "ordered_in"
+
+    CUSTOMER_ORDER ||--o{ SHIPMENT : "fulfilled_by"
+    WAREHOUSE ||--o{ SHIPMENT : "dispatches"
+    VEHICLE ||--o{ SHIPMENT : "transports"
+    EMPLOYEE ||--o{ SHIPMENT : "drives / inspects"
+    SHIPMENT ||--o{ SHIPMENT_ITEM : "manifests (weak)"
+    PRODUCT ||--o{ SHIPMENT_ITEM : "shipped_as"
+
+    CUSTOMER ||--o{ AUDIT_CLIENT_LOG : "audited_into"
+    INVENTORY_STOCK ||--o{ AUDIT_INVENTORY_LOG : "tracked_into"
