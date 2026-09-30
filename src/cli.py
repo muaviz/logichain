@@ -24,8 +24,7 @@ def print_banner():
  | | | (_) | (_| | | |___| | | | (_| | | | | |
  |_|  \___/ \__, |_|\____|_| |_|\__,_|_|_| |_|
             |___/                             
-  Enterprise Supply Chain & Logistics DBMS Suite
-  CSE3001 Complete Syllabus Reference System
+ LogiChain - Supply Chain & Logistics DBMS
     """
     console.print(f"[bold cyan]{banner}[/bold cyan]")
 
@@ -217,51 +216,145 @@ def run_2pc_demo():
     for l in res["execution_log"]:
         console.print(f"  {l}")
 
-def main_menu():
-    while True:
-        print_banner()
-        console.print("[bold]Select an Option:[/bold]")
-        console.print("  [1] View Database Schema & Statistics")
-        console.print("  [2] Run Lab 1: Pilot/Vehicle Certification & Division Queries")
-        console.print("  [3] Run Lab 2: 25-Query Sailors & Fleet Benchmark Catalog")
-        console.print("  [4] Run Lab 3: Wholesale Multi-Dimensional OLAP (Star Schema)")
-        console.print("  [5] Run Lab 5 & 10: Transparent Audit & Error Trigger Demos")
-        console.print("  [6] Run Lab 11: Employee Hierarchy & Boss Self-Joins")
-        console.print("  [7] Run Concurrency & Isolation Anomaly Simulation (Unit 5)")
-        console.print("  [8] Run Deadlock & Wait-For Graph Simulator (Unit 5)")
-        console.print("  [9] Run Distributed Two-Phase Commit (2PC) Simulator (Unit 5)")
-        console.print("  [10] Re-Initialize & Seed Database")
-        console.print("  [0] Exit")
 
-        choice = Prompt.ask("\nEnter choice", choices=["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"], default="1")
+def sql_analytics_menu():
+    while True:
+        console.print("\n[bold cyan]SQL & Analytics[/bold cyan]")
+        console.print(" [1] Certification & Division Queries")
+        console.print(" [2] SQL Query Catalog")
+        console.print(" [3] OLAP / Star Schema Analytics")
+        console.print(" [0] Back")
+
+        choice = Prompt.ask(
+            "\nEnter choice",
+            choices=["0", "1", "2", "3"],
+            default="0"
+        )
+
         console.clear()
 
         if choice == "0":
-            console.print("[bold green]Thank you for exploring LogiChain DBMS![/bold green]")
-            sys.exit(0)
+            return
         elif choice == "1":
-            show_database_stats()
-        elif choice == "2":
             run_lab01_demo()
-        elif choice == "3":
+        elif choice == "2":
             run_lab02_demo()
-        elif choice == "4":
+        elif choice == "3":
             run_lab03_demo()
-        elif choice == "5":
-            run_lab05_10_triggers_demo()
-        elif choice == "6":
-            run_lab11_demo()
-        elif choice == "7":
-            run_concurrency_demo()
-        elif choice == "8":
-            run_deadlock_demo()
-        elif choice == "9":
-            run_2pc_demo()
-        elif choice == "10":
-            initialize_database(reset=True)
-            console.print("[bold green]Database successfully re-initialized and seeded![/bold green]")
 
         Prompt.ask("\n[dim]Press Enter to continue...[/dim]")
+        console.clear()
+
+def integrity_menu():
+    while True:
+        console.print("\n[bold cyan]Database Integrity & Auditing[/bold cyan]")
+        console.print(" [1] Audit & Trigger Demonstrations")
+        console.print(" [0] Back")
+
+        choice = Prompt.ask(
+            "\nEnter choice",
+            choices=["0", "1"],
+            default="0"
+        )
+
+        console.clear()
+
+        if choice == "0":
+            return
+        elif choice == "1":
+            run_lab05_10_triggers_demo()
+
+        Prompt.ask("\n[dim]Press Enter to continue...[/dim]")
+        console.clear()
+
+def advanced_dbms_menu():
+    while True:
+        console.print("\n[bold cyan]Advanced DBMS Demonstrations[/bold cyan]")
+        console.print(" [1] Concurrency & Isolation")
+        console.print(" [2] Deadlock Detection")
+        console.print(" [3] Two-Phase Commit")
+        console.print(" [0] Back")
+
+        choice = Prompt.ask(
+            "\nEnter choice",
+            choices=["0", "1", "2", "3"],
+            default="0"
+        )
+
+        console.clear()
+
+        if choice == "0":
+            return
+        elif choice == "1":
+            run_concurrency_demo()
+        elif choice == "2":
+            run_deadlock_demo()
+        elif choice == "3":
+            run_2pc_demo()
+
+        Prompt.ask("\n[dim]Press Enter to continue...[/dim]")
+        console.clear()
+def main_menu():
+    while True:
+        print_banner()
+
+        console.print("[bold]Main Menu[/bold]\n")
+
+        console.print(" [1] View Database Statistics")
+        console.print(" [2] SQL & Analytics")
+        console.print(" [3] Database Integrity & Auditing")
+        console.print(" [4] Employee Hierarchy")
+        console.print(" [5] Advanced DBMS Demonstrations")
+        console.print(" [6] Database Management")
+        console.print(" [0] Exit")
+
+        choice = Prompt.ask(
+            "\nEnter choice",
+            choices=["0", "1", "2", "3", "4", "5", "6"],
+            default="1"
+        )
+
+        console.clear()
+
+        if choice == "0":
+            console.print(
+                "[bold green]Thank you for exploring LogiChain DBMS![/bold green]"
+            )
+            sys.exit(0)
+
+        elif choice == "1":
+            show_database_stats()
+
+        elif choice == "2":
+            sql_analytics_menu()
+
+        elif choice == "3":
+            integrity_menu()
+
+        elif choice == "4":
+            run_lab11_demo()
+
+        elif choice == "5":
+            advanced_dbms_menu()
+
+        elif choice == "6":
+            console.print("\n[bold cyan]Database Management[/bold cyan]")
+            console.print(" [1] Re-Initialize & Seed Database")
+            console.print(" [0] Back")
+
+            db_choice = Prompt.ask(
+                "\nEnter choice",
+                choices=["0", "1"],
+                default="0"
+            )
+
+            if db_choice == "1":
+                initialize_database(reset=True)
+                console.print(
+                    "[bold green]Database successfully re-initialized and seeded![/bold green]"
+                )
+                Prompt.ask("\n[dim]Press Enter to continue...[/dim]")
+
         console.clear()
 
 if __name__ == "__main__":

@@ -1,22 +1,83 @@
-# LogiChain: Enterprise Supply Chain & Logistics Management System
-### Reference Implementation & Comprehensive Academic Documentation for CSE3001 Database Management Systems
+# LogiChain — Supply Chain & Logistics DBMS
+### Academic Database Management System for Supply Chain & Logistics
 
 ---
 
 ## Executive Overview
 
-**LogiChain** is an enterprise-grade, high-throughput Supply Chain, Fleet Logistics, Warehouse Management, and Dimensional Analytics Database System. It is engineered from first principles to provide a complete reference implementation and exhaustive documentation covering **100% of the CSE3001 Database Management Systems syllabus (Units 1–5 and Lab Experiments 1–11)**.
+LogiChain is an academic relational database system designed
+around supply-chain and logistics operations.
+
+The core application models and manages customers, orders,
+products, suppliers, warehouses, inventory, shipments,
+vehicles, and employees.
+
+The repository also contains additional DBMS demonstrations
+for SQL, views, triggers, indexing, stored routines,
+analytics, concurrency, recovery, and related coursework topics.
 
 ### Key Highlights:
-- **Dual-Target Database Engine**:
-  - **PostgreSQL / SQLite Core**: Runnable relational DDL, `PL/pgSQL` stored procedures/functions, triggers, materialized views, composite B+ Tree indexing, and MVCC concurrency simulations.
-  - **Oracle 19c/21c PL/SQL Compatibility Suite**: Modular PL/SQL Packages, explicit cursors with `FOR UPDATE WHERE CURRENT OF`, savepoint batch transactions, user-defined exceptions with `RAISE_APPLICATION_ERROR`, sequences, and synonyms.
-- **Interactive Verification & Simulation Suite**:
-  - Python 3.11+ (FastAPI + Rich Terminal CLI) equipped with interactive ACID isolation anomaly generators (Dirty/Non-Repeatable/Phantom Reads), Deadlock & Wait-For Graph simulators, and Distributed Two-Phase Commit (2PC) harnesses.
-- **Academic Documentation Suite**:
-  - Formal Relational Algebra & Tuple Relational Calculus (TRC) expressions, Codd's 12 Rules audit, mathematical 1NF $\rightarrow$ 4NF normalization proofs with Multi-Valued Dependencies (MVDs), B+ Tree node mechanics, Cost-Based Optimizer models, and ARIES crash recovery workflows.
+### Key Highlights
+
+- **Core relational database**
+  - Customers and orders
+  - Products and suppliers
+  - Warehouses and inventory
+  - Shipments, vehicles, and employees
+
+- **Database functionality**
+  - SQL queries and joins
+  - Views and triggers
+  - Indexes
+  - Stored procedures and functions
+  - Transaction and integrity demonstrations
+
+- **Analytics**
+  - Dimensional/star-schema data model
+  - Sales and shipment analysis
+
+- **Academic demonstrations**
+  - Concurrency and isolation
+  - Deadlock detection
+  - Two-phase commit
+  - Recovery concepts
+  - Oracle PL/SQL examples
 
 ---
+
+
+## Project Scope
+
+### Core Application
+
+The main LogiChain application focuses on supply-chain and
+logistics management through a relational database.
+
+Core areas include:
+
+- Customer and order management
+- Product and supplier management
+- Warehouse and inventory management
+- Shipment and fleet management
+- Employee and driver information
+- SQL-based operational and analytical queries
+
+### Academic DBMS Demonstrations
+
+The repository also includes separate demonstrations and
+documentation for database coursework concepts, including:
+
+- Relational algebra and normalization
+- Views and triggers
+- Stored procedures and functions
+- Indexing and query optimization
+- Transactions and concurrency control
+- Deadlock and two-phase commit demonstrations
+- Recovery concepts
+- Oracle PL/SQL examples
+
+These modules support the academic objectives of the project
+without representing separate core business applications.
 
 ## CSE3001 Syllabus & Lab Experiments Coverage Matrix
 
@@ -92,7 +153,10 @@ erDiagram
 ```bash
 python3 -m src.cli
 ```
-The CLI provides an interactive menu to explore all database tables, execute Lab 1–11 queries, inspect audit triggers, run transaction anomaly tests, and simulate deadlocks.
+The CLI provides an interactive interface for exploring the
+core supply-chain database, running SQL and analytics queries,
+viewing integrity and audit demonstrations, and accessing
+advanced DBMS simulations.
 
 ```
   _             _  ____ _           _       
@@ -104,17 +168,17 @@ The CLI provides an interactive menu to explore all database tables, execute Lab
   Enterprise Supply Chain & Logistics DBMS Suite
 
 Select an Option:
-  [1] View Database Schema & Statistics
-  [2] Run Lab 1: Pilot/Vehicle Certification & Division Queries
-  [3] Run Lab 2: 25-Query Sailors & Fleet Benchmark Catalog
-  [4] Run Lab 3: Wholesale Multi-Dimensional OLAP (Star Schema)
-  [5] Run Lab 5 & 10: Transparent Audit & Error Trigger Demos
-  [6] Run Lab 11: Employee Hierarchy & Boss Self-Joins
-  [7] Run Concurrency & Isolation Anomaly Simulation (Unit 5)
-  [8] Run Deadlock & Wait-For Graph Simulator (Unit 5)
-  [9] Run Distributed Two-Phase Commit (2PC) Simulator (Unit 5)
-  [10] Re-Initialize & Seed Database
-  [0] Exit
+  LogiChain - Supply Chain & Logistics DBMS
+
+Main Menu
+
+[1] View Database Statistics
+[2] SQL & Analytics
+[3] Database Integrity & Auditing
+[4] Employee Hierarchy
+[5] Advanced DBMS Demonstrations
+[6] Database Management
+[0] Exit
 ```
 
 ### 3. Run the Automated Concurrency & ACID Test Suite
