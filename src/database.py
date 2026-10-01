@@ -1,7 +1,9 @@
-import sqlite3
 import contextlib
-from typing import Generator, List, Dict, Any, Optional
+import sqlite3
+from typing import Any, Dict, Generator, List
+
 from src.config import SQLITE_DB_PATH
+
 
 def get_connection(timeout: float = 10.0) -> sqlite3.Connection:
     """Returns a new SQLite connection with foreign keys and dict row factory enabled."""

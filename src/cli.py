@@ -1,15 +1,15 @@
 import sys
-import os
-from typing import List, Dict, Any
+from typing import Any, Dict, List
+
 from rich.console import Console
-from rich.table import Table
 from rich.panel import Panel
 from rich.prompt import Prompt
 from rich.syntax import Syntax
+from rich.table import Table
 
-from src.database import get_connection, execute_query
-from src.schema_loader import initialize_database
 from src.config import SQL_DIR
+from src.database import execute_query, get_connection
+from src.schema_loader import initialize_database
 
 console = Console()
 

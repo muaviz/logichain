@@ -1,6 +1,8 @@
 import pytest
-from src.schema_loader import initialize_database
+
 from src.database import execute_query
+from src.schema_loader import initialize_database
+
 
 @pytest.fixture(autouse=True)
 def setup_db():
