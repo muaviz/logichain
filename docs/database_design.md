@@ -21,7 +21,7 @@ LogiChain implements the standard 3-Level ANSI-SPARC Database Architecture:
                                     ▼
 +-------------------------------------------------------------------------+
 |                        INTERNAL LEVEL (Physical Storage)                |
-|  B+ Tree Indexes, Page Layouts, WAL Logs, Row Formats, RAID-10 Storage  |
+|  B+ Tree Indexes, Page Layouts, WAL Logs, Row Storage Blocks           |
 +-------------------------------------------------------------------------+
 ```
 
@@ -45,7 +45,7 @@ LogiChain implements the standard 3-Level ANSI-SPARC Database Architecture:
 - Demonstrated via view encapsulation (`VW_ACTIVE_PRODUCTS`, `VW_ACTIVE_CUSTOMERS`) and stored procedure interfaces.
 
 ### 2.2 Physical Data Independence
-- The capacity to modify physical storage structures (e.g., creating secondary B+ Tree indexes, altering page fill factors, switching RAID configurations) without modifying the conceptual schema or rewriting SQL queries.
+- The capacity to modify physical storage structures (e.g., creating secondary B+ Tree indexes, altering table layouts) without modifying the conceptual schema or rewriting SQL queries.
 
 ---
 

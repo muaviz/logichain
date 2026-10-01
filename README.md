@@ -5,97 +5,54 @@
 
 ## Executive Overview
 
-LogiChain is an academic relational database system designed
-around supply-chain and logistics operations.
+LogiChain is an academic relational database management system designed around supply chain and logistics operations.
 
-The core application models and manages customers, orders,
-products, suppliers, warehouses, inventory, shipments,
-vehicles, and employees.
+The core schema models and manages customers, orders, products, suppliers, warehouses, inventory, shipments, vehicles, and employees across 20 normalized relational entities.
 
-The repository also contains additional DBMS demonstrations
-for SQL, views, triggers, indexing, stored routines,
-analytics, concurrency, recovery, and related coursework topics.
+The repository includes a comprehensive set of DBMS implementations mapped directly to the university DBMS syllabus (CSE3001), including relational algebra, mathematical normalization proofs (1NF to 4NF), view definitions, index structures, triggers, transaction controls with savepoints, and a 100% native Oracle 19c/21c PL/SQL suite with packages, cursors, custom exceptions, and stored routines.
 
-### Key Highlights:
 ### Key Highlights
 
-- **Core relational database**
-  - Customers and orders
-  - Products and suppliers
-  - Warehouses and inventory
-  - Shipments, vehicles, and employees
+- **Core Relational Database**
+  - 20 normalized tables with primary keys, foreign key referential integrity (`ON DELETE CASCADE`, `ON DELETE RESTRICT`), and `CHECK` constraints.
+  - Customers, orders, items, products, categories, suppliers, warehouses, bins, inventory stocks, vehicles, types, certifications, employees, dependents, and audit logs.
 
-- **Database functionality**
-  - SQL queries and joins
-  - Views and triggers
-  - Indexes
-  - Stored procedures and functions
-  - Transaction and integrity demonstrations
+- **Standard SQL Functionality**
+  - Multi-table inner, outer, and self-joins.
+  - Subqueries, correlated `EXISTS`, and Relational Division ($\div$).
+  - Updatable views (`WITH CHECK OPTION`) and security views.
+  - Performance B-Tree and composite indexes.
+  - Transparent audit triggers and business-rule enforcement triggers.
+  - Transaction Control Language (`BEGIN`, `SAVEPOINT`, `ROLLBACK TO SAVEPOINT`, `COMMIT`).
 
-- **Analytics**
-  - Dimensional/star-schema data model
-  - Sales and shipment analysis
+- **Oracle PL/SQL Suite**
+  - Modular package specifications and package bodies (`PKG_LOGICHAIN_DISPATCH`).
+  - Explicit cursor loops, `SQL%ROWCOUNT`, and batch savepoint rollbacks.
+  - User-defined exceptions, exception handling, and error codes.
+  - Stored procedures with `IN` and `OUT` parameters and SQL-callable stored functions.
 
-- **Academic demonstrations**
-  - Concurrency and isolation
-  - Deadlock detection
-  - Two-phase commit
-  - Recovery concepts
-  - Oracle PL/SQL examples
+- **Pure Terminal CLI Interface**
+  - Terminal runner built with Rich, providing formatted tables and menus without requiring external web servers or GUIs.
 
 ---
-
-
-## Project Scope
-
-### Core Application
-
-The main LogiChain application focuses on supply-chain and
-logistics management through a relational database.
-
-Core areas include:
-
-- Customer and order management
-- Product and supplier management
-- Warehouse and inventory management
-- Shipment and fleet management
-- Employee and driver information
-- SQL-based operational and analytical queries
-
-### Academic DBMS Demonstrations
-
-The repository also includes separate demonstrations and
-documentation for database coursework concepts, including:
-
-- Relational algebra and normalization
-- Views and triggers
-- Stored procedures and functions
-- Indexing and query optimization
-- Transactions and concurrency control
-- Deadlock and two-phase commit demonstrations
-- Recovery concepts
-- Oracle PL/SQL examples
-
-These modules support the academic objectives of the project
-without representing separate core business applications.
 
 ## CSE3001 Syllabus & Lab Experiments Coverage Matrix
 
 | Unit / Lab No. | Topic in Syllabus | LogiChain Implementation | Source File Link |
 | :--- | :--- | :--- | :--- |
-| **Unit 1** | ANSI-SPARC 3-Level Architecture, Data Independence, ER Diagrams, Weak Entity Sets, Attribute Types, Cardinalities | 3-Level Views, ER Crow's Foot specs, weak entities (`SHIPMENT_ITEM`, `WAREHOUSE_BIN`, `DEPENDENT`), composite/multivalued mappings. | [database_design.md](file:///home/muaviz/collegedev/logichain/docs/database_design.md), [er_diagram.mermaid](file:///home/muaviz/collegedev/logichain/docs/diagrams/er_diagram.mermaid) |
-| **Unit 2** | Relational Models, Integrity Rules, Relational Algebra, Calculus (TRC), Codd's Rules, Normalization (1NF to 4NF) | Foreign key actions (`ON DELETE CASCADE`), formal $\sigma, \pi, \bowtie, \div, \cup, -, \rho, \gamma$ queries, Codd's audit, 1NF–4NF proofs. | [relational_algebra.md](file:///home/muaviz/collegedev/logichain/docs/theoretical/relational_algebra.md), [normalization_proofs.md](file:///home/muaviz/collegedev/logichain/docs/theoretical/normalization_proofs.md), [codds_rules.md](file:///home/muaviz/collegedev/logichain/docs/theoretical/codds_rules.md) |
+| **Unit 1** | ANSI-SPARC 3-Level Architecture, Data Independence, ER Diagrams, Weak Entity Sets, Attribute Types, Cardinalities | 3-Level Views, ER Crow's Foot specs, weak entities (`SHIPMENT_ITEM`, `WAREHOUSE_BIN`, `EMPLOYEE_DEPENDENT`), composite/multivalued mappings. | [database_design.md](file:///home/muaviz/collegedev/logichain/docs/database_design.md), [er_diagram.mermaid](file:///home/muaviz/collegedev/logichain/docs/diagrams/er_diagram.mermaid) |
+| **Unit 2** | Relational Models, Integrity Rules, Relational Algebra, Calculus (TRC), Normalization (1NF to 4NF) | Foreign key actions (`ON DELETE CASCADE`), formal $\sigma, \pi, \bowtie, \div, \cup, -, \rho, \gamma$ queries, 1NF–4NF decomposition and lossless join proofs. | [relational_algebra.md](file:///home/muaviz/collegedev/logichain/docs/theoretical/relational_algebra.md), [normalization_proofs.md](file:///home/muaviz/collegedev/logichain/docs/theoretical/normalization_proofs.md) |
 | **Unit 3** | SQL DDL/DML/TCL, Joins, Subqueries, Aggregate Functions, Updatable & Materialized Views, Triggers, Sequences, Indexes | Master DDL, complex multi-table joins, correlated `EXISTS`, updatable views `WITH CHECK OPTION`, performance indexes. | [01_ddl_tables.sql](file:///home/muaviz/collegedev/logichain/sql/schema/01_ddl_tables.sql), [01_performance_indexes.sql](file:///home/muaviz/collegedev/logichain/sql/indexes/01_performance_indexes.sql), [01_updatable_views.sql](file:///home/muaviz/collegedev/logichain/sql/views/01_updatable_views.sql) |
-| **Unit 4** | PL/SQL, %TYPE, %ROWTYPE, Cursors, Stored Procedures/Functions, Storage & RAID, B+ Trees, Dynamic Hashing, Query Optimization | PL/pgSQL & Oracle PL/SQL packages, explicit cursors, B+ Tree mathematical models, RAID 0/1/5/10 analysis, CBO formulas. | [02_oracle_packages.sql](file:///home/muaviz/collegedev/logichain/sql/plsql_oracle/02_oracle_packages.sql), [storage_and_raid.md](file:///home/muaviz/collegedev/logichain/docs/architecture/storage_and_raid.md), [indexing_bplus_trees.md](file:///home/muaviz/collegedev/logichain/docs/architecture/indexing_bplus_trees.md), [query_optimization.md](file:///home/muaviz/collegedev/logichain/docs/performance/query_optimization.md) |
-| **Unit 5** | ACID Properties, Isolation Levels, Serializability, Concurrency Control (2PL, Deadlocks, MVCC, 2PC), ARIES Recovery | Concurrency test runner, deadlock detector, 2PC simulation, Strict/Rigorous 2PL specs, ARIES Analysis/Redo/Undo workflows. | [acid_and_isolation.md](file:///home/muaviz/collegedev/logichain/docs/transactions/acid_and_isolation.md), [concurrency_control.md](file:///home/muaviz/collegedev/logichain/docs/transactions/concurrency_control.md), [recovery_and_aries.md](file:///home/muaviz/collegedev/logichain/docs/transactions/recovery_and_aries.md) |
+| **Unit 4** | PL/SQL, %TYPE, %ROWTYPE, Cursors, Stored Procedures/Functions | Native Oracle PL/SQL packages, explicit cursors, stored procedures with `IN`/`OUT` parameters, and stored functions. | [02_oracle_packages.sql](file:///home/muaviz/collegedev/logichain/sql/plsql_oracle/02_oracle_packages.sql), [03_oracle_cursors_savepoints.sql](file:///home/muaviz/collegedev/logichain/sql/plsql_oracle/03_oracle_cursors_savepoints.sql), [05_oracle_procedures_functions.sql](file:///home/muaviz/collegedev/logichain/sql/plsql_oracle/05_oracle_procedures_functions.sql) |
+| **Unit 5** | ACID Properties, Isolation Levels, Serializability, 2PL Protocols | Formal ACID lifecycle documentation, ANSI isolation levels, Two-Phase Locking specifications, and live savepoint transaction execution. | [acid_and_isolation.md](file:///home/muaviz/collegedev/logichain/docs/transactions/acid_and_isolation.md), [transactions_tcl.sql](file:///home/muaviz/collegedev/logichain/sql/queries/transactions_tcl.sql) |
 | **Lab 1** | Airline Flight & Pilot Certification (Complex Joins & Division) | Fleet vehicle and driver certification queries with Relational Division ($\div$) over certified vehicles. | [lab01_certification_queries.sql](file:///home/muaviz/collegedev/logichain/sql/queries/lab_equivalents/lab01_certification_queries.sql) |
 | **Lab 2** | Sailors, Boats & Reserves (25 Queries: ALL, ANY, Aggregations, Outer Joins) | Complete 25-query benchmark catalog on Driver/Fleet operations matching all 25 queries. | [lab02_sailors_25_queries.sql](file:///home/muaviz/collegedev/logichain/sql/queries/lab_equivalents/lab02_sailors_25_queries.sql) |
-| **Lab 3** | Wholesale Multi-Dimensional Data Warehouse (Product, Spatial, Time, Sales) | Star/Snowflake schema (`FACT_SALES_SHIPMENT`, `DIM_*`) with OLAP aggregations (`ROLLUP`, `CUBE`, material/city analytics). | [03_data_warehouse_star_schema.sql](file:///home/muaviz/collegedev/logichain/sql/schema/03_data_warehouse_star_schema.sql), [lab03_dimensional_olap.sql](file:///home/muaviz/collegedev/logichain/sql/queries/lab_equivalents/lab03_dimensional_olap.sql) |
+| **Lab 3** | Wholesale Product & Spatial Aggregations (Material, Region, City) | Multi-dimensional aggregation queries (`GROUP BY`, `SUM`, `AVG`, `ROUND`) executed directly on normalized relational tables. | [lab03_dimensional_olap.sql](file:///home/muaviz/collegedev/logichain/sql/queries/lab_equivalents/lab03_dimensional_olap.sql) |
 | **Lab 4** | Shipping Manifest Implicit Cursor & Hot DB Backup Script | PL/SQL block utilizing `SQL%FOUND`, `SQL%ROWCOUNT` + hot database backup/restore shell automation. | [03_oracle_cursors_savepoints.sql](file:///home/muaviz/collegedev/logichain/sql/plsql_oracle/03_oracle_cursors_savepoints.sql), [backup_restore.sh](file:///home/muaviz/collegedev/logichain/scripts/backup_restore.sh) |
 | **Lab 5** | Transparent Audit System on Client_Master (`AUDIT_CLIENT_LOG`) | Trigger tracking `UPDATE` and `DELETE` on `CUSTOMER` with before-image balance, operation type, user, and timestamp. | [01_audit_triggers.sql](file:///home/muaviz/collegedev/logichain/sql/triggers/01_audit_triggers.sql) |
 | **Lab 6** | Supplier & Parts Cursor with Savepoints, Deleting Every 10th Row & ON DELETE CASCADE | Explicit cursor loop committing in batches, rolling back to savepoints, deleting every Nth row with cascade verification. | [03_oracle_cursors_savepoints.sql](file:///home/muaviz/collegedev/logichain/sql/plsql_oracle/03_oracle_cursors_savepoints.sql) |
-| **Lab 7** | Mutual Exclusivity Business Rule with Custom Exceptions | Enforces separation of duties (Driver cannot be Quality Inspector on same shipment), raising user-defined exceptions. | [03_driver_exclusivity.sql](file:///home/muaviz/collegedev/logichain/sql/procedures_plpgsql/03_driver_exclusivity.sql), [04_oracle_exceptions.sql](file:///home/muaviz/collegedev/logichain/sql/plsql_oracle/04_oracle_exceptions.sql) |
-| **Lab 8 & 9** | Stored Procedures with IN/OUT, SQL-Callable Stored Function & 10% Salary Bump | Stored procedure returning Driver Name & Salary via `OUT` parameters, function returning depot location in SQL, 10% raise script. | [02_employee_bonus.sql](file:///home/muaviz/collegedev/logichain/sql/procedures_plpgsql/02_employee_bonus.sql), [05_oracle_procedures_functions.sql](file:///home/muaviz/collegedev/logichain/sql/plsql_oracle/05_oracle_procedures_functions.sql) |
+| **Lab 7** | Mutual Exclusivity Business Rule with Custom Exceptions | Enforces separation of duties (Driver cannot be Quality Inspector on same shipment), raising user-defined exceptions. | [04_oracle_exceptions.sql](file:///home/muaviz/collegedev/logichain/sql/plsql_oracle/04_oracle_exceptions.sql) |
+| **Lab 8 & 9** | Stored Procedures with IN/OUT, SQL-Callable Stored Function & 10% Salary Bump | Stored procedure returning Driver Name & Salary via `OUT` parameters, function returning depot location in SQL, 10% raise script. | [05_oracle_procedures_functions.sql](file:///home/muaviz/collegedev/logichain/sql/plsql_oracle/05_oracle_procedures_functions.sql) |
 | **Lab 10** | Trigger Raising User-Defined Error to Block Unauthorized DML | Triggers preventing unauthorized price reductions > 75% or discontinued product ordering with custom error codes. | [02_business_rule_triggers.sql](file:///home/muaviz/collegedev/logichain/sql/triggers/02_business_rule_triggers.sql), [04_oracle_exceptions.sql](file:///home/muaviz/collegedev/logichain/sql/plsql_oracle/04_oracle_exceptions.sql) |
 | **Lab 11** | Employee & Department Hierarchy (Self-Joins, Boss of President = NULL, Subordinate Rankings) | Recursive hierarchy queries, department groupings, President NULL boss handling, and subordinate counts descending. | [lab11_employee_hierarchy.sql](file:///home/muaviz/collegedev/logichain/sql/queries/lab_equivalents/lab11_employee_hierarchy.sql) |
 
@@ -153,11 +110,7 @@ erDiagram
 ```bash
 python3 -m src.cli
 ```
-The CLI provides an interactive interface for exploring the
-core supply-chain database, running SQL and analytics queries,
-viewing integrity and audit demonstrations, and accessing
-advanced DBMS simulations.
-
+The CLI provides an interactive terminal interface for exploring the database:
 ```
   _             _  ____ _           _       
  | |   ___   __ _(_)/ ___| |__   __ _(_)_ __  
@@ -165,25 +118,23 @@ advanced DBMS simulations.
  | | | (_) | (_| | | |___| | | | (_| | | | | |
  |_|  \___/ \__, |_|\____|_| |_|\__,_|_|_| |_|
             |___/                             
-  Enterprise Supply Chain & Logistics DBMS Suite
-
-Select an Option:
-  LogiChain - Supply Chain & Logistics DBMS
+ LogiChain - Supply Chain & Logistics DBMS CLI
 
 Main Menu
 
-[1] View Database Statistics
-[2] SQL & Analytics
-[3] Database Integrity & Auditing
-[4] Employee Hierarchy
-[5] Advanced DBMS Demonstrations
-[6] Database Management
-[0] Exit
+ [1] View Database Statistics (20 Tables)
+ [2] SQL Query Suite (Labs 1, 2, 3, 11)
+ [3] Database Triggers & Auditing (Labs 5, 10)
+ [4] ACID Transaction & Savepoints Demo
+ [5] Oracle PL/SQL Suite Viewer
+ [6] Database Management (Re-seed DB)
+ [0] Exit
 ```
 
-### 3. Run the Automated Concurrency & ACID Test Suite
+### 3. Non-Interactive Demonstration Mode
+To run an automated walkthrough of all key demonstrations:
 ```bash
-./scripts/run_concurrency_tests.sh
+python3 -m src.cli --demo
 ```
 
 ### 4. Run Pytest Test Suite
@@ -191,12 +142,14 @@ Main Menu
 pytest tests/ -v
 ```
 
-### 5. Launch Web GUI Control Center & REST API
+### 5. Automated Database Backup & Restore (Lab 4)
 ```bash
-uvicorn src.api.app:app --host 127.0.0.1 --port 8000 --reload
+# Create a hot SQL dump backup
+./scripts/backup_restore.sh backup
+
+# Restore from a backup file
+./scripts/backup_restore.sh restore backups/logichain_backup_<timestamp>.sql
 ```
-- Open Interactive Web GUI Dashboard at: `http://127.0.0.1:8000/` (or `/dashboard`)
-- Open Swagger API documentation at: `http://127.0.0.1:8000/docs`
 
 ---
 
@@ -205,47 +158,32 @@ uvicorn src.api.app:app --host 127.0.0.1 --port 8000 --reload
 ```
 /home/muaviz/collegedev/logichain/
 ├── README.md                           <- Master academic documentation & overview
-├── requirements.txt                    <- Python dependencies (fastapi, rich, pytest)
+├── requirements.txt                    <- Python dependencies (rich, tabulate, pytest)
 ├── .env.example                        <- Configuration template
 ├── docs/                               <- Comprehensive DBMS Syllabus Documentation
 │   ├── database_design.md              <- ANSI-SPARC 3-Level Architecture & ER Specs
 │   ├── diagrams/
 │   │   ├── er_diagram.mermaid          <- High-res Crow's Foot ERD
-│   │   ├── schema_relational_model.mermaid
-│   │   ├── transaction_states.mermaid
-│   │   └── aries_recovery_flow.mermaid
+│   │   └── schema_relational_model.mermaid
 │   ├── theoretical/
 │   │   ├── relational_algebra.md       <- Formal Relational Algebra & TRC formulas
-│   │   ├── codds_rules.md              <- Evaluation of Codd's 12 Rules
-│   │   └── normalization_proofs.md     <- 1NF to 4NF proofs with FDs & MVDs
-│   ├── architecture/
-│   │   ├── storage_and_raid.md         <- RAID 0/1/5/10, block formats, file layout
-│   │   └── indexing_bplus_trees.md     <- B+ Tree math, split algorithms & Hashing
-│   ├── performance/
-│   │   └── query_optimization.md       <- Heuristic optimization rules & CBO models
+│   │   └── normalization_proofs.md     <- 1NF to 4NF proofs with FDs & Lossless Join
 │   └── transactions/
-│       ├── acid_and_isolation.md       <- Isolation levels, anomalies, 2PL protocols
-│       ├── concurrency_control.md      <- Multiple Granularity, Deadlocks & MVCC
-│       └── recovery_and_aries.md       <- WAL, Checkpoints & ARIES algorithm
+│       └── acid_and_isolation.md       <- ACID properties, anomalies, 2PL protocols
 ├── sql/
 │   ├── schema/
-│   │   ├── 01_ddl_tables.sql           <- Master DDL with all relational integrity rules
-│   │   ├── 02_seed_data.sql            <- Rich enterprise dataset (20+ entities)
-│   │   └── 03_data_warehouse_star_schema.sql <- Star & Snowflake dimensional schema
+│   │   ├── 01_ddl_tables.sql           <- Master DDL with 20 tables & relational integrity rules
+│   │   └── 02_seed_data.sql            <- Rich enterprise dataset (20 entities)
 │   ├── views/
 │   │   ├── 01_updatable_views.sql      <- Updatable views (WITH CHECK OPTION)
 │   │   ├── 02_security_views.sql       <- User-role security & abstraction views
 │   │   └── 03_materialized_views.sql   <- Analytical summary views
 │   ├── indexes/
-│   │   └── 01_performance_indexes.sql  <- B-Tree, Composite, Hash & Partial indexes
+│   │   └── 01_performance_indexes.sql  <- B-Tree, Composite, & Partial indexes
 │   ├── triggers/
 │   │   ├── 01_audit_triggers.sql       <- Transparent audit triggers (Lab 5)
 │   │   ├── 02_business_rule_triggers.sql <- Error-raising triggers (Lab 10)
 │   │   └── 03_inventory_sync_triggers.sql
-│   ├── procedures_plpgsql/
-│   │   ├── 01_stock_transfer.sql       <- Stock transfer procedure with savepoints (Lab 6)
-│   │   ├── 02_employee_bonus.sql       <- IN/OUT procedure & SQL function (Lab 8, 9)
-│   │   └── 03_driver_exclusivity.sql   <- Business exception procedure (Lab 7)
 │   ├── plsql_oracle/                   <- 100% Native Oracle PL/SQL Suite
 │   │   ├── 01_oracle_ddl_sequences.sql <- Oracle DDL, Sequences, Synonyms
 │   │   ├── 02_oracle_packages.sql      <- Modular PL/SQL Packages (Specs & Bodies)
@@ -265,25 +203,12 @@ uvicorn src.api.app:app --host 127.0.0.1 --port 8000 --reload
 │   ├── config.py                       <- Database and environment configuration
 │   ├── database.py                     <- Core DB connection and query execution interface
 │   ├── schema_loader.py                <- Automated DDL/DML runner and initializer
-│   ├── cli.py                          <- Interactive Rich Terminal CLI runner
-│   ├── api/                            <- FastAPI REST Endpoints
-│   │   ├── app.py
-│   │   └── routers/
-│   │       ├── inventory.py
-│   │       ├── shipments.py
-│   │       ├── analytics.py
-│   │       └── audit.py
-│   └── simulations/
-│       ├── isolation_runner.py         <- Runs concurrency anomaly demos
-│       ├── deadlock_runner.py          <- Runs deadlock detection demo
-│       └── two_phase_commit.py         <- Simulates 2PC across distributed depots
+│   └── cli.py                          <- Interactive Rich Terminal CLI runner
 ├── tests/
 │   ├── test_schema_integrity.py        <- Validates PKs, FKs, CHECK constraints
 │   ├── test_triggers_and_audit.py      <- Validates transparent audit logging
-│   ├── test_isolation_levels.py        <- Automated tests for ACID isolation & 2PC
 │   └── test_lab_queries.py             <- Validates Lab 1 to 11 queries
 └── scripts/
     ├── setup_database.sh               <- Automates DB setup & seeding
-    ├── run_concurrency_tests.sh        <- Runs transaction & deadlock test suite
     └── backup_restore.sh               <- Database backup & restore script (Lab 4)
 ```
