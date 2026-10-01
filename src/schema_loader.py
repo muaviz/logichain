@@ -5,7 +5,7 @@ from src.config import SQL_DIR, SQLITE_DB_PATH
 from src.database import get_connection
 
 def initialize_database(reset: bool = True) -> bool:
-    """Initializes the database by executing all DDL, seed data, views, indexes, and triggers."""
+    """Initializes the database by executing all standard DDL, seed data, views, indexes, and triggers."""
     if reset and SQLITE_DB_PATH.exists():
         try:
             os.remove(SQLITE_DB_PATH)
@@ -18,7 +18,6 @@ def initialize_database(reset: bool = True) -> bool:
     sql_files = [
         SQL_DIR / "schema" / "01_ddl_tables.sql",
         SQL_DIR / "schema" / "02_seed_data.sql",
-        SQL_DIR / "schema" / "03_data_warehouse_star_schema.sql",
         SQL_DIR / "views" / "01_updatable_views.sql",
         SQL_DIR / "views" / "02_security_views.sql",
         SQL_DIR / "views" / "03_materialized_views.sql",

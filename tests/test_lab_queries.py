@@ -37,10 +37,12 @@ def test_lab02_sailors_25_queries():
 
 def test_lab03_dimensional_olap():
     q = """
-    SELECT dp.material_type, SUM(f.net_revenue) as net_rev
-    FROM FACT_SALES_SHIPMENT f
-    JOIN DIM_PRODUCT_HIERARCHY dp ON f.dim_product_key = dp.dim_product_key
-    GROUP BY dp.material_type;
+    SELECT 
+        p.material_type,
+        SUM(oi.line_total) as net_rev
+    FROM ORDER_ITEM oi
+    JOIN PRODUCT p ON oi.product_id = p.product_id
+    GROUP BY p.material_type;
     """
     res = execute_query(q)
     assert len(res) >= 3
