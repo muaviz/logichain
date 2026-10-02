@@ -1,7 +1,10 @@
-import pytest
 import sqlite3
-from src.schema_loader import initialize_database
+
+import pytest
+
 from src.database import get_connection
+from src.schema_loader import initialize_database
+
 
 @pytest.fixture(autouse=True)
 def setup_db():

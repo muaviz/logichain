@@ -1,8 +1,8 @@
 import os
-import sqlite3
-from pathlib import Path
+
 from src.config import SQL_DIR, SQLITE_DB_PATH
 from src.database import get_connection
+
 
 def initialize_database(reset: bool = True) -> bool:
     """Initializes the database by executing all standard DDL, seed data, views, indexes, and triggers."""
