@@ -110,9 +110,9 @@ erDiagram
 ```bash
 python3 -m src.cli
 ```
-The CLI provides an interactive terminal interface for exploring the database:
+The CLI provides an interactive terminal interface for exploring the database  :
 ```
-  _             _  ____ _           _       
+  _               _  ____ _           _       
  | |   ___   __ _(_)/ ___| |__   __ _(_)_ __  
  | |  / _ \ / _` | | |   | '_ \ / _` | | '_ \ 
  | | | (_) | (_| | | |___| | | | (_| | | | | |
